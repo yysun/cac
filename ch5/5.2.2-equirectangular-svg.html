@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>等距形投影</title>
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="map"></div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/topojson/topojson.js" charset="utf-8"></script>
+  <script>
+    /* global d3, topojson */
+    var width = 1080,
+        height = 540,
+
+    projection = d3.geo.equirectangular()                    // 地图投影
+                   .scale((width-1) / 2 / Math.PI)
+                   .translate([width / 2, height / 2]),
+    path = d3.geo.path().projection(projection),             // 绘图函数
+    svg = d3.select('#map').append("svg")                    // 生成 svg 标签
+            .style("position", 'absolute')
+            .attr("width", width)
+            .attr("height", height);
+    d3.json('topo_countries_110m.json', function (json) {    // 载入地图数据文件
+      var features = topojson.feature(json,                  // 获取地物
+          json.objects.countries_110m).features;
+      svg.selectAll("path")                                  // 绘制地图
+          .data(features)
+          .enter()
+          .append("path")
+          .attr("d", path)
+          .attr("class", "feature");
+    });
+  </script>
+</body>
+</html>
+

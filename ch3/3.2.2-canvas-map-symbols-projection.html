@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>世界地图</title>
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="map">
+    <img src="natural-earth-i.png" />
+    <canvas id="canvas"></canvas>
+    <p>
+      <span id="scale"></span> 2000 公里 &nbsp; 等距形投影 &nbsp;
+      图像来源: Natural Earth V2.0.0, 2012-10-12
+    </p>
+  </div>
+  <script>
+    // 简单屏幕坐标转换
+    function projection(lng, lat, fn) {
+      var x = (180 + lng) * 1080 / 360,                      // 转换经度到x坐标
+          y = (90 - lat)  * 540  / 180;                      // 转换纬度到y坐标
+      if (fn) fn(x, y);                                      // 回调函数
+    }
+    var canvas  = document.getElementById("canvas"),         // 获取画布
+        context = canvas.getContext("2d");                   // 获取画布的绘图区域
+    canvas.width = 1080;                                     // 设置画布宽度
+    canvas.height = 540;                                     // 设置画布高度
+
+    context.beginPath();                                     // 开始绘制赤道
+    projection(-180, 0, function (x, y) {                  
+      context.moveTo(x, y);                                  // 移动到x,y
+    });                                                    
+    projection(180, 0, function (x, y) {                  
+      context.lineTo(x, y);                                  // 画线到x,y
+    });
+    context.lineWidth = 1;                                   // 设置线宽
+    context.strokeStyle = "orange";
+    context.stroke();                                        // 为图形着色
+
+    context.beginPath();                                     // 开始本初子午线
+    projection(0, -90, function (x, y) {
+      context.moveTo(x, y);                                  // 移动到x,y
+    });
+    projection(0, 90, function (x, y) {
+      context.lineTo(x, y);                                  // 画线到x,y
+    });
+    context.stroke();                                        // 为图形着色
+
+    context.beginPath();                                     // 开始北京图形
+    projection(116.3917, 39.9139, function (x, y) {
+      context.arc(x, y, 4, 0, 2 * Math.PI);                  // 绘制圆形符号
+      context.fillStyle = 'yellow';                          // 设置填充色
+      context.fill();                                        // 填充
+      context.strokeStyle = "red";                           // 设置边框色
+      context.stroke();                                      // 绘制边框
+      context.font = '10px SimHei';                          // 设置字体
+      context.strokeText('北京', x - 10, y + 15);             // 绘制文字
+    });
+
+  </script>
+</body>
+</html>
+
+
+

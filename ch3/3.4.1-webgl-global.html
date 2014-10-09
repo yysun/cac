@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>three.js 三维地图</title>
+  <meta charset="utf-8">
+</head>
+<body>
+  <div id="map"></div>
+  <p style="font: normal 12px arial;text-align:center">
+    图像来源: Natural Earth V2.0.0, 2012-10-12
+  </p>
+  <script src="../bower_components/threejs/build/three.js"></script>
+  <script>
+    var width = 1080,
+        height = 540,
+        map = document.getElementById('map'),
+        camera = new THREE.PerspectiveCamera(60,             // 创建相机
+           width / height, 1, 2000), 
+        scene = new THREE.Scene(),                           // 创建场景
+        earth = new THREE.Object3D(),                        // 创建地球
+        loader = new THREE.TextureLoader(),                  // 创建材质载入其
+        renderer = new THREE.WebGLRenderer();                // 创建绘图器
+
+    scene.add(earth);                                        // 加地球加入场景
+    camera.position.z = 500;                                 // 设置相机高度  
+
+    init();
+    animate();
+
+    function init() {
+      loader.load('natural-earth-i.png', function (texture) {
+        var geometry = new THREE.SphereGeometry(200, 20, 20),
+            material = new THREE.MeshBasicMaterial({ map: texture, overdraw: 0.5 }),
+            mesh = new THREE.Mesh(geometry, material);
+        earth.add(mesh);
+      });
+      renderer.setClearColor(0xffffff);
+      renderer.setSize(width, height);
+      map.appendChild(renderer.domElement);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      render();
+    }
+
+    function render() {
+      earth.rotation.y -= 0.005;
+      renderer.render(scene, camera);
+    }
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>数据分级</title>
+  <link href="styles.css" rel="stylesheet" />
+  <link href="colorbrewer.css" rel="stylesheet" />
+  <style>
+    text {font-family: SimHei; font-size:14px; fill:#000;}
+
+
+    .bar rect {
+  fill: steelblue;
+  shape-rendering: crispEdges;
+}
+
+.bar text {
+  fill: #fff;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+  </style>
+</head>
+<body>
+  <div id="title"></div>
+  <div id="map"></div>
+  <div id="legend"></div>
+  <div id="footer">数据来源：联合国统计局 http://data.un.org，地图投影：自然地球</div>
+  <svg>
+
+    <!--<g class="Greens">
+      <rect width="50" height="20" x="200" y="0" class="q0-5"></rect>
+      <rect width="50" height="20" x="200" y="25" class="q1-5"></rect>
+      <rect width="50" height="20" x="200" y="50" class="q2-5"></rect>
+      <rect width="50" height="20" x="200" y="75" class="q3-5"></rect>
+      <rect width="50" height="20" x="200" y="100" class="q4-5"></rect>
+    </g>
+
+    <g class="Blues">
+      <rect width="50" height="20" x="200" y="0" class="q0-5"></rect>
+      <rect width="50" height="20" x="200" y="25" class="q1-5"></rect>
+      <rect width="50" height="20" x="200" y="50" class="q2-5"></rect>
+      <rect width="50" height="20" x="200" y="75" class="q3-5"></rect>
+      <rect width="50" height="20" x="200" y="100" class="q4-5"></rect>
+    </g>-->
+
+  </svg>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/topojson/topojson.js" charset="utf-8"></script>
+  <script src="../bower_components/queue-async/queue.js" charset="utf-8"></script>
+  <script src="d3.geo.projection.v0.min.js"></script>
+  <script src="map.js" charset="utf-8"></script>
+  <script>
+    /* global d3, topojson, map, queue */
+    /*
+    map({no_graticule:true}, function(svg, projection, path) {
+
+        //projection.rotate([-105, 0]);
+        //svg.selectAll('path').attr('d', path);
+
+      queue()
+        .defer(d3.json, 'data/ne_110m_admin_0_countries_lakes.topojson')                 // topojson polygons
+        .defer(d3.csv, 'data/UNdata_Internet.csv')
+        .await(make_map);
+
+      function make_map(error, topojson_countries, data) {       // 载入地图数
+        var countries = topojson.feature(topojson_countries,
+              topojson_countries.objects.ne_110m_admin_0_countries_lakes).features,
+
+            scale = d3.scale.quantize()
+              .domain([0, 100])
+              .range(d3.range(5));
+
+        function quantize(id) {
+          var item = data.filter(function(d) {
+            return d.Year === "2012" && d["Country or Area Code"] === id;
+          })
+          .map(function(d) { return "q" + scale(d.Value) + "-5"; });
+          var cls = item[0] || "none";
+          return cls;
+        }
+
+        svg.append("g")                                       // 绘制地物
+           .selectAll("path")
+           .data(countries)
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("id", function(d) { return d.id; })
+           .attr("class", function(d) {return quantize(d.id);})
+           .attr("stroke", "#333");
+
+        var xscale = d3.scale.linear()
+              .domain([0, 100])
+              .range([0, 300]),
+
+            x = d3.svg.axis()
+            .scale(xscale)
+            .orient("bottom")
+            .ticks(5)
+            .tickSize(10);
+
+
+        d3.select("#legend")
+          .append("svg")
+          .attr("height", "30")
+          .append("g")
+          .attr("transform", "translate(390,0)")
+          .call(x)
+          .selectAll("rect")
+          .data([0,1,2,3,4])
+          .enter()
+          .append("rect")
+          .attr("x", function(d) { return d * 60; })
+          .attr("width", 60)
+          .attr("height", 8)
+          .attr("class", function(d) { return "q" + d + "-5"; });
+
+      }
+  });
+  */
+
+/*
+    var names = ['<20%', '20%-40%', '40%-60%', '60%-80%', '>=80%'],
+        g = d3.select('#map')
+              .append('svg')
+              .append('g')
+              .attr('id', legend);
+
+    g.selectAll('text')
+     .data(names)
+     .enter()
+     .append('text')
+     .attr('width', 50)
+     .attr('height', 20)
+     .attr('x', 60)
+     .attr('y', function (d, i) { return i * 25 + 15; })
+     .text(function (d) { return d; });
+
+
+    var scale = d3.scale.linear()
+      .domain([0, 4])
+      .range(['#edf8e9', '#006d2c']);
+
+    g.selectAll('rect')
+     .data(names)
+     .enter()
+     .append('rect')
+     .attr('width', 50)
+     .attr('height', 20)
+     .attr('y', function (d, i) { return i * 25; })
+     .attr("fill", function (d, i) { return scale(i); });
+
+    g.append('g')
+     .attr('class', 'Blues')
+     .selectAll('rect')
+     .data(names)
+     .enter()
+     .append('rect')
+     .attr('width', 50)
+     .attr('height', 20)
+     .attr('x', 200)
+     .attr('y', function (d, i) { return i * 25; })
+     .attr("class", function (d, i) { return "q" + i + "-5"; });
+
+     */
+
+    d3.json('data/country_gdp.json', function (json) {
+
+      var values = d3.map(json).values();
+
+       // A formatter for counts.
+      var formatCount = d3.format(",f");
+
+      var margin = { top: 10, right: 30, bottom: 30, left: 30 },
+          width = 960 - margin.left - margin.right,
+          height = 500 - margin.top - margin.bottom;
+
+      var x = d3.scale.linear()
+          .domain([d3.min(values), d3.max(values)])
+          .range([0, width]);
+
+      // Generate a histogram using twenty uniformly-spaced bins.
+      var data = d3.layout.histogram()
+          .bins(x.ticks(20))
+          (values);
+
+      var y = d3.scale.linear()
+          .domain([0, d3.max(data, function (d) { return d.y; })])
+          .range([height, 0]);
+
+      var xAxis = d3.svg.axis()
+          .scale(x)
+          .orient("bottom");
+
+      var svg = d3.select("body").append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      var bar = svg.selectAll(".bar")
+          .data(data)
+        .enter().append("g")
+          .attr("class", "bar")
+          .attr("transform", function (d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
+
+      bar.append("rect")
+          .attr("x", 1)
+          .attr("width", x(data[0].dx) - 1)
+          .attr("height", function (d) { return height - y(d.y); });
+
+      bar.append("text")
+          .attr("dy", ".75em")
+          .attr("y", 6)
+          .attr("x", x(data[0].dx) / 2)
+          .attr("text-anchor", "middle")
+          .text(function (d) { return formatCount(d.y); });
+
+      svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis);
+
+    });
+
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

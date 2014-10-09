@@ -1,0 +1,22 @@
+{
+  "name": "cac",
+  "version": "1.0.0",
+  "authors": [
+    "Yiyi Sun <yiyisun@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3-geo-projection": "~0.2.7",
+    "topojson": "~1.6.13",
+    "queue-async": "~1.0.7",
+    "d3": "~3.4.8",
+    "threejs": "*"
+  }
+}

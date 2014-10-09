@@ -1,0 +1,27 @@
+﻿#map {
+    position:relative;
+    width: 1080px;
+    height: 540px;
+}
+
+#map img {
+    position:absolute;
+}
+
+#map p {
+    position:absolute;
+    font: normal 12px arial;
+    color: rgb(89,159,192);
+    top: 510px;
+    left:650px;
+}
+
+#map #scale {
+    display: inline-block;
+    height: 5px;
+    width: 54px;
+    border: 1px solid rgb(89,159,192);
+    border-top: 0px;
+}
+
+

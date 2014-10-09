@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>切片地图</title>
+  <link href="styles.css" rel="stylesheet" />
+  <style>
+    img {border:1px solid red;}
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="attribution">
+    数据来源:<a href="http://naturalearthdata.com">自然地球</a> V2.0 2012, 地图投影:球面墨卡托
+  </div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="d3.geo.tile.v0.min.js"></script>
+  <script src="map.js"></script>
+  <script>
+    /*global d3, map0, matrix*/
+    var tile_layer = d3.select("#map")                       // 创建地图片图层
+      .append("div")
+      .attr("class", "tiles");
+    map0({}, function (_, __, tiles) {
+      var max = Math.pow(2, tiles[0][2]),                    // 地图片矩阵行列个数
+          m = matrix(tiles.scale, tiles.translate),          // 生成转换矩阵
+          valid_tiles = tiles.filter(function (d) {          // 过滤超界地图片
+            return d[0] < max && d[1] < max;
+          });
+      tile_layer
+        .style("-webkit-transform", m)                       // 设置坐标转换矩阵
+        .style("transform", m);
+      var map_tiles = tile_layer.selectAll(".tile")          // selectAll
+         .data(valid_tiles, function (d) { return d; });
+      map_tiles.exit().remove();                             // remove
+      map_tiles.enter()                                      // enter
+        .append("img")                                       // append
+        .attr("class", "tile")                               // attr
+        .style("left", function(d){return (d[0]*256)+"px";}) // 地图片定位
+        .style("top",  function(d){return (d[1]*256)+"px";})
+        .attr("src", function (d) {
+          return "http://localhost:8081/"                    // 设置地图片网址
+            + d[2] + "/" + d[0] + "/" + d[1] + ".png";
+      });
+    });
+  </script>
+</body>
+</html>
+
+
+

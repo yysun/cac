@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>天地图-SVG地图叠加</title>
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="map"></div>
+  <div id="attribution">
+    数据来源:<a href="http://tianditu.cn">天地图</a>, <a href="http://naturalearthdata.com">自然地球</a>
+    地图投影:球面墨卡托
+  </div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/topojson/topojson.js" charset="utf-8"></script>
+  <script src="d3.geo.tile.v0.min.js"></script>
+  <script src="map.js"></script>
+  <script>
+    /*global d3,topojson, map*/
+    var options = {
+      tiles: [
+        "http://t0.tianditu.cn/DataServer?T=vec_w&X={x}&Y={y}&L={z}",
+        "http://t0.tianditu.cn/DataServer?T=cva_w&X={x}&Y={y}&L={z}"
+      ]
+    }, svg;
+    d3.json('topo_countries_110m.json', function (json) {
+
+        var features = topojson.feature(json,
+            json.objects.countries_110m).features;             // 转化 topojson 至 geojson
+
+        map(options, function (projection, path) {
+          if (!svg) {
+            svg = d3.select("#map")                            // 创建地图片图层
+              .append("svg")
+              .style("position", 'absolute')
+              .attr("id", "states");
+            svg.selectAll("path")
+              .data(features)
+              .enter()
+              .append("path")
+              .attr("d", path);
+          }
+          svg.selectAll('path').attr('d', path);               // 更新经纬网
+        });
+
+    });
+  </script>
+</body>
+</html>
+
+
+

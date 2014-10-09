@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>OSM</title>
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="map"></div>
+  <div id="attribution">
+    数据来源:&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, 
+    <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, 
+    地图投影:球面墨卡托
+  </div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="d3.geo.tile.v0.min.js"></script>
+  <script src="map.js"></script>
+  <script>
+
+    var options = {
+      tiles: ["http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"],
+      domains: 'abc'
+    };
+    map(options);
+
+  </script>
+</body>
+</html>
+

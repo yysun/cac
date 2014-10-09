@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>世界地图</title>
+  <link href="styles.css" rel="stylesheet" />
+  <style>
+    .rect {fill:none; stroke-width:1.3; stroke:#599fc0;}
+    .line {fill:none; stroke-width:0.3; stroke:orange;}
+    .circle {fill:yellow; stroke-width:0.3; stroke:red;}
+    text {font-family: SimHei; font-size:4px; text-anchor:middle; fill:red;}
+  </style>
+</head>
+<body>
+  <div id="map">
+    <img src="natural-earth-i.png" />
+
+    <svg id="svg">
+
+      <g transform="translate(540, 270) scale(3,-3) ">
+
+        <path d="M-180 -90 L180 -90 L180 90 L-180 90Z" class="rect" />
+        <path d="M-180 0 L180 0" class="line"/>
+        <path d="M0 -90 L0 90" class="line" />
+        <path d="M116.3917 39.9139 a1.3 1.3 0 1 0 1.3 1.3Z" class="circle" />
+        <text x="116.3917" y="-34.9139" transform="scale(1,-1)">北京</text>
+      </g>
+    </svg>
+
+    <p>
+      <span id="scale"></span> 2000 公里 &nbsp; 等距形投影 &nbsp;
+      图像来源: Natural Earth V2.0.0, 2012-10-12
+    </p>
+  </div>
+</body>
+</html>
+
+
+
+
+
+

@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>GeoJSON-Canvas</title>
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="map">
+    <img src="natural-earth-i.png" />
+    <p>
+      <span id="scale"></span> 2000 公里 &nbsp; 等距形投影 &nbsp;
+      图像来源: Natural Earth V2.0.0, 2012-10-12
+    </p>
+  </div>
+
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script>
+    /* global d3 */
+    var width = 1080,
+        height = 540,
+
+    projection = d3.geo.equirectangular()
+                   .scale((width-1) / 2 / Math.PI)
+                   .translate([width / 2, height / 2]),
+
+    canvas = d3.select("#map").append("canvas")              // 在 #map 下生成 canvas
+			         .style("position", 'absolute')                // 设置 canavs 定位方式
+               .attr("width", width)                         // 设置 canavs 宽度
+               .attr("height", height),                      // 设置 canavs 高度
+
+    context = canvas.node().getContext("2d"),                // 获取 context
+
+    path = d3.geo.path()                                     // 建立绘图函数
+             .projection(projection)                         // 设置投影函数
+             .context(context);                              // 设置 context
+
+    context.strokeStyle = '#ff6a00';
+
+    d3.json('countries_110m.json', function (json) {         // 载入地图数据文件
+      var features = json.features;                          // 获取地物
+      for (var i = 0; i < features.length; i++) {            // 绘制地物
+        context.beginPath();
+        path(features[i]);
+        context.stroke();
+      }
+    });
+
+  </script>
+</body>
+</html>
+

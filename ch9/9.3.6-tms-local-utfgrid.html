@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>切片地图交互</title>
+  <link href="styles.css" rel="stylesheet" />
+  <style>
+    img {border:1px solid red;}
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="tooltip" class="hidden"></div>
+  <div id="attribution">
+    数据来源:<a href="http://naturalearthdata.com">自然地球</a>,
+    <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,
+    地图投影:球面墨卡托
+  </div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="d3.geo.tile.v0.min.js"></script>
+  <script src="map.js"></script>
+  <script>
+    /*global d3, map */
+    var options = {
+      tiles: ["http://localhost:8081/{z}/{x}/{y}.png"],
+    },
+    tooltip = d3.select('#tooltip');
+    map(options, function (_, __, tiles) {
+      tiles.forEach(function (d) {
+        if (d.img) {
+          d3.json("http://localhost:8081/" +                 // 载入 UTFGrid 
+            d[2] + "/" + d[0] + "/" + d[1] + ".grid.json", function (json) {
+            d.img.utfgrid = json;
+          });
+        }
+      });
+
+      d3.selectAll('img').on("mousemove", function () {
+        if (!this.utfgrid) return;
+        var x = d3.mouse(this)[0],           
+            y = d3.mouse(this)[1],
+            col = x / tiles.scale / 4 | 0,                   // 获取UTGGrid所在列
+            row = y / tiles.scale / 4 | 0,                   // 获取UTGGrid所在行
+            data = getdata(this.utfgrid, col, row);          // 获取属性数据
+        if (data) {
+          tooltip.text(data.ISO_A3 + ' - ' + data.NAME)      // 显示属性数据
+            .style("left", (d3.event.pageX + 10) + "px")
+            .style("top", (d3.event.pageY - 10) + "px")
+            .classed("hidden", false);
+        } else {
+          tooltip.classed("hidden", true);                   // 隐藏属性数据
+        }
+      });
+
+    });
+
+    function getdata(utfgrid, col, row) {                    // UTFGrid反编码
+      if (utfgrid.grid[row]) {
+        var idx = utfgrid.grid[row].charCodeAt(col);
+        if (idx >= 93) idx--;
+        if (idx >= 35) idx--;
+        idx = idx - 32;
+        var key = utfgrid.keys[idx];
+        return utfgrid.data[key];
+      }
+    }
+
+  </script>
+</body>
+</html>
+

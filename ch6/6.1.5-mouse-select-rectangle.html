@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>地图区域选取</title>
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="map"></div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/topojson/topojson.js" charset="utf-8"></script>
+  <script src="map.js" charset="utf-8"></script>
+  <script>
+    /* global d3, map */
+    var dispatch = d3.dispatch('mousedown', 'mousemove', 'mouseup');  // 自定义事件
+    map({}, function(svg, projection) {
+      var md = false, rect, x0, y0;
+      svg.on("mousedown", function() {                                // 响应鼠标键下按事件
+        md = true;
+        rect = svg.append('rect')                                     // 创建空矩形
+          .classed({'arc':true})
+          .attr('x', x0 = d3.mouse(this)[0])
+          .attr('y', y0 = d3.mouse(this)[1]);
+        var point = projection.invert([d3.event.clientX, d3.event.clientY]);
+        dispatch.mousedown(point);                                    // 发布自定义事件 mousedown
+      })
+      .on("mousemove", function() {
+        if(md) {
+          rect.attr('width',  d3.event.clientX - x0)
+              .attr('height', d3.event.clientY - y0);
+          var point = projection.invert([d3.event.clientX, d3.event.clientY]);
+          dispatch.mousemove(point);                                  // 发布自定义事件 mousemove
+        }
+      })
+      .on("mouseup", function() {
+        dispatch.mouseup(svg);                                        // 发布自定义事件 mouseup
+        md = false;
+        rect.remove();                                                // 删除矩形
+      });
+    });
+
+    var width = 540,
+        height = 540,
+        projection = d3.geo.orthographic()                       // 定义正射投影
+          .scale(135)
+          .translate([width / 4, height / 4])
+          .rotate([-110, 0])
+          .clipAngle(90)
+          .precision(0.1);
+
+    map({width: 270, height: 270, projection: projection },      // 用正射投影绘制地图
+      function(svg, projection, path) {
+        svg.style('top', '270px')                                // 设置小地图背景
+           .select('.background')
+           .style('fill', '#eee');
+        var point0;
+        dispatch.on("mousedown", function(point) {               // 响应鼠标键下按事件
+          point0 = point;                                        // 创建空图形
+          svg.append("path")
+             .attr("class", "arc")
+             .attr("id", "rect");
+        })
+        .on("mousemove", function(point1) {                      // 响应鼠标拖动
+            var rect = {
+                type: "Polygon", coordinates: [[                 // 绘制大地图被选取的区域
+                  [point0[0], point0[1]],
+                  [point1[0], point0[1]],
+                  [point1[0], point1[1]],
+                  [point0[0], point1[1]],
+                  [point0[0], point0[1]],
+                ]]};
+            svg.select("#rect")
+               .datum(rect)
+               .attr("d", path);
+        })
+        .on("mouseup", function() {                              // 响应鼠标键释放
+          svg.select("#rect")
+             .remove();                                          // 删除图形
+        });
+     });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>地图片编码转换</title>
+</head>
+<body>
+  <script>
+
+    function tileToQuadKey(x, y, zoom) {
+      var quad = "";
+      for (var i = zoom; i > 0; i--) {
+        var mask = 1 << (i - 1);
+        var cell = 0;
+        if ((x & mask) != 0)
+          cell++;
+        if ((y & mask) != 0)
+          cell += 2;
+        quad += cell;
+      }
+      return quad;
+    }
+
+    function quadKeyToTile(key) {
+      var x = 0;
+      var y = 0;
+      var zoom = key.length;
+      for (var i = zoom; i > 0 ; i--) {
+        var mask = 1 << (i - 1);
+        var cell = parseInt(key.substr(zoom - i, 1));
+        if ((cell & 1) != 0) {
+          x = x + mask;
+        }
+        if ((cell & 2) != 0) {
+          y = y + mask;
+        }
+      }
+      return [x, y, zoom];
+    }
+
+    function tileToTMS(x, y, zoom) {
+      var ymax = 1 << zoom;
+      return [x, ymax - y - 1, zoom];
+    }
+
+  </script>
+</body>
+</html>

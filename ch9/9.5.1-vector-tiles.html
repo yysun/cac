@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>矢量切片地图</title>
+  <link href="styles.css" rel="stylesheet" />
+  <style>
+    .tile path {
+      fill: none;
+      stroke: #eee;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+    .tile path:hover {
+      stroke: #f00;
+    }
+    .tile .major_road {
+      stroke: #999;
+      stroke-width: 2px;
+    }
+    .tile .minor_road {
+      stroke: #ccb;
+    }
+    .tile .highway {
+      stroke: #fe7575;
+      stroke-width: 4px;
+    }
+    .tile .rail {
+      stroke: #333;
+    }
+    path.primary1 {fill:none; stroke:#e66; stroke-width:4;}
+    path.primary2 {fill:none; stroke:#ffffdf; stroke-width:2; }
+    path.rail1 {fill:none; stroke:rgb(105,105,105); stroke-width:3;}
+    path.rail2 {fill:none; stroke:rgb(255,255,255); stroke-width:2;}
+    .tile text {font-family: SimHei; font-size:14px; text-anchor:middle; fill:#000;}
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="attribution">
+    数据来源:&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,
+    <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,
+    地图投影:球面墨卡托
+  </div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/queue-async/queue.js" charset="utf-8"></script>
+  <script src="d3.geo.tile.v0.min.js"></script>
+  <script src="map.js"></script>
+  <script>
+    /*global d3, map0 */
+    var projection = d3.geo.mercator()                       // 定义墨卡托投影
+          .scale((1 << 21) / Math.PI),                       // 初始缩放为第14级
+        path = d3.geo.path().projection(projection),         // 定义绘图函数
+        zoom = d3.behavior.zoom()                            // 定义鼠标交互
+          .scale(projection.scale() * 2 * Math.PI)
+          .translate(projection([121.38, 31.24])
+            .map(function (x) { return -x; }))
+            .on('zoomend', refresh)
+            .on('zoomstart', function() {
+              p0 = zoom.translate();
+            }),
+        p0 = zoom.translate(),
+        svg = d3.select("#map").append("svg"),               // 创建地图片图层
+        tiles_layer = svg.append("g")
+          .attr("class", "tiles");
+
+    function refresh() {
+      tiles_layer
+        .attr("transform", null)
+        .selectAll('.tile path').attr('d', path);
+    }
+
+    map0({projection: projection, zoom:zoom}, function (_, __, tiles) {
+      var max = Math.pow(2, tiles[0][2]),                    // 地图片矩阵行列个数
+          valid_tiles = tiles.filter(function (d) {
+            return d[0] < max && d[1] < max;
+          }),
+          tr = "translate(" +
+             (zoom.translate()[0]-p0[0]) + "," +
+             (zoom.translate()[1]-p0[1]) + ")";
+
+      tiles_layer.attr("transform", tr);
+
+      var map_tiles = tiles_layer.selectAll('.tile')         // selectAll
+        .data(valid_tiles, function (d) { return d; });
+
+      map_tiles.exit()
+        .each(function() { if(this.xhr) this.xhr.abort(); })
+        .remove();                                           // remove
+
+      map_tiles.enter()                                      // enter
+        .append("g")                                         // append
+        .attr("class", function (d) {                        // 按照模板生成地图片网址
+          d.g = this;
+          this.xhr = d3.json("http://" + ["a", "b", "c"][(d[0] + d[1]) % 3] +
+            ".tile.openstreetmap.us/vectiles-highroad/" +
+            d[2] + "/" + d[0] + "/" + d[1] + ".json", function(json){
+              drawTile(d3.select(d.g), json);
+            });
+          return "tile";
+        });
+    });
+
+
+    function drawTile(g, json) {
+      if(!g || !json) return;
+      function lines(kind, types) {
+        return json.features.filter(function (d) {
+          return types.indexOf(d.properties[kind]) >= 0;
+        });
+      }
+      g.append("g")
+         .selectAll("path")
+         .data(lines("kind", ["major_road", "minor_road"]))
+         .enter()
+         .append("path")
+         .attr("d", path)
+         .attr("class", function (d) { return d.properties.kind; });
+      g.append("g")
+         .selectAll("path")
+         .data(lines("kind", ["rail"]))
+         .enter()
+         .append("path")
+         .attr("d", path)
+         .attr("class", "rail1");
+      g.append("g")
+         .selectAll("path")
+         .data(lines("kind", ["rail"]))
+         .enter()
+         .append("path")
+         .attr("d", path)
+         .attr("class", "rail2")
+         .attr("stroke-dasharray", "10,10");
+      g.append("g")
+         .selectAll("path")
+         .data(lines("kind", ["highway"]))
+         .enter()
+         .append("path")
+         .attr("d", path)
+         .attr("class", "primary1");
+      g.append("g")
+         .selectAll("path")
+         .data(lines("kind", ["highway"]))
+         .enter()
+         .append("path")
+         .attr("d", path)
+         .attr("class", "primary2");
+    }
+
+  </script>
+</body>
+</html>
+
+

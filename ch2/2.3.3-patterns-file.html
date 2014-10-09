@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>世界地图</title>
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="map">
+    <img src="natural-earth-i.png" />
+    <p>
+      <span id="scale"></span> 2000 公里 &nbsp; 等距形投影 &nbsp;
+      图像来源: Natural Earth V2.0.0, 2012-10-12
+    </p>
+  </div>
+  <script src="d3.js"></script>
+  <script>
+
+    var features;
+    d3.json('a_file.json', function (json) {
+      features = json.features;
+    });
+    console.log(features);
+
+
+    d3.json('a_file.json', function (json_a) {
+      d3.json('b_file.json', function (json_b) {
+        d3.json('c_file.json', function (json_c) {
+          // 处理数据
+        });
+      });
+    });
+
+    queue()
+      .defer(d3.json, 'a_file.json')
+      .defer(d3.json, 'b_file.json')
+      .defer(d3.json, 'b_file.json')
+      .await(function (json_a, json_b, json_c) {
+        // 处理数据
+      });
+    
+  </script>
+</body>
+</html>
+

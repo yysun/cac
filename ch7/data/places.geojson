@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+                                                                                
+"features": [
+{ "type": "Feature", "properties": { "osm_id": "244080687", "name": "黄浦区", "type": "suburb", "population": null }, "geometry": { "type": "Point", "coordinates": [ 121.479864, 31.2335925 ] } },
+{ "type": "Feature", "properties": { "osm_id": "244081648", "name": "上海", "type": "state", "population": 15550000 }, "geometry": { "type": "Point", "coordinates": [ 121.4691749, 31.2322735 ] } },
+{ "type": "Feature", "properties": { "osm_id": "468712503", "name": "十六铺", "type": "locality", "population": null }, "geometry": { "type": "Point", "coordinates": [ 121.496207, 31.227627 ] } },
+{ "type": "Feature", "properties": { "osm_id": "2161356891", "name": null, "type": "neighbourhood", "population": null }, "geometry": { "type": "Point", "coordinates": [ 121.49800980000001, 31.238978 ] } }
+]
+}

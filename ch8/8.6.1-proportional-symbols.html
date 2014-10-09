@@ -1,0 +1,110 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>分级符号</title>
+  <link href="styles.css" rel="stylesheet" />
+  <link href="colorbrewer.css" rel="stylesheet" />
+  <style type="text/css">
+    body {background:#eee; font:12px arial; margin-top:20px;}
+    #title, #footer  {text-align:center; color:#000; width:1080px; margin:10px;}
+    #title {font-size:24px;}
+    .background {fill:#fff;}
+    #states path { stroke:#999; fill:#eee;}
+    #legend text { fill: #000; }
+    #legend rect { stroke:#aaa;}
+    #symbols circle {fill: #98abc5; opacity:0.8;stroke:#333;}
+  </style>
+</head>
+<body class="YlGn">
+  <div id="title">世界各国商品进出口交易 (2012)</div>
+  <div id="map"></div>
+  <div id="footer">数据来源：联合国统计局 http://data.un.org，地图投影：自然地球</div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/topojson/topojson.js" charset="utf-8"></script>
+  <script src="../bower_components/queue-async/queue.js" charset="utf-8"></script>
+  <script src="d3.geo.projection.v0.min.js"></script>
+  <script src="map.js" charset="utf-8"></script>
+  <script>
+    /* global d3, topojson, map, queue */
+    map({no_graticule:true}, function(svg, projection, path) {
+      
+      queue()
+        .defer(d3.json, 'data/topo_countries_110m.json')
+        .defer(d3.json, 'data/country_trade.json')
+        .await(make_map);
+
+      function make_map(error, topojson_countries, dictionary ) {
+
+        var countries = topojson.feature(topojson_countries,           // 读取政区图形数据
+              topojson_countries.objects.countries_110m).features,
+            trade_data = d3.map(dictionary).values();
+
+        svg.append("g")                                                // 绘制政区图形
+           .attr("id", "states")
+           .selectAll("path")
+           .data(countries)
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("id", function (d) { return d.id; });
+
+        var scale = d3.scale.linear()                                  // 符号比例转换函数
+              .domain([
+                d3.min(trade_data, function(d){ return d.total; }),
+                d3.max(trade_data, function(d){ return d.total; })
+              ])
+              .range([5, 50]);
+
+        svg.append("g")                                                // 绘制地物
+           .attr("id", "states")
+           .selectAll("path")
+           .data(countries)
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("id", function(d) { return d.id; })
+           .attr("stroke", "#aaa");
+
+        svg.append("g")                                                // 符号定位
+           .attr("id", "symbols")
+           .selectAll("g")
+           .data(countries)
+           .enter()
+           .append("g")
+           .attr("id", function(d) { return d.id; })
+           .attr("transform", function(d) {
+              return "translate(" + path.centroid(d) + ")";
+            });
+
+        svg.selectAll("#symbols g").each(function() {                  // 绘制符号
+          var item = dictionary[this.id];
+          if(item) {
+            var r = scale(item.total);
+            d3.select(this)
+              .append("circle")
+              .attr("r", r);
+            }
+        });
+      }
+
+  });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

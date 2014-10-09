@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>简单投影</title>
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <script>
+
+    // 简单屏幕坐标转换
+    function projection(lng, lat, fn) {
+      var x = (180 + lng) * 1080 / 360,                      // 转换经度到x坐标
+          y = (90 - lat)  * 540  / 180;                      // 转换纬度到y坐标
+      if (fn) fn(x, y);                                      // 回调函数
+    }
+
+    projection(116.3917, 39.9139, function (x, y) {          // 计算北京的屏幕坐标
+      // 输出屏幕坐标
+      console.log(x, y);
+
+      // 用屏幕坐标绘图
+      // ......
+    });
+
+  </script>
+</body>
+</html>
+
+

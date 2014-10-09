@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>分级地图 II</title>
+  <link href="styles.css" rel="stylesheet" />
+  <link href="colorbrewer.css" rel="stylesheet" />
+  <style type="text/css">
+    body {background:#eee; font:12px arial; margin-top:20px;}
+    #title, #footer  {text-align:center; color:#000; width:1080px;}
+    #title {font-size:24px;}
+    .background {fill:#fff;}
+    #legend path { fill:none;}
+    #legend line { stroke: #000; shape-rendering: crispEdges;}
+    #legend text { fill: #000; }
+    .none, .qundefined-5{ fill: #eee; }
+    text {font-family: SimHei; font-size:12px; text-anchor:middle; fill:#333;}
+  </style>
+</head>
+<body class="YlGn">
+  <div id="title">世界各国 GDP (2012)</div>
+  <div id="map"></div>
+  <div id="legend"></div>
+  <div id="footer">数据来源：联合国统计局 http://data.un.org，地图投影：自然地球</div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/topojson/topojson.js" charset="utf-8"></script>
+  <script src="../bower_components/queue-async/queue.js" charset="utf-8"></script>
+  <script src="d3.geo.projection.v0.min.js"></script>
+    <script src="map.js" charset="utf-8"></script>
+  <script>
+    /* global d3, topojson, map, queue*/
+    map({}, function (svg, projection, path) {
+
+      queue()
+        .defer(d3.json, 'data/topo_countries_110m.json')
+        .defer(d3.json, 'data/country_gdp_levels_2.json')
+        .defer(d3.json, 'data/country_labels.json')
+        .await(make_map);
+
+      function make_map(error, topojson_countries, dictionary, labels) {
+
+        var countries = topojson.feature(topojson_countries,
+              topojson_countries.objects.countries_110m).features;
+
+        svg.append("g")
+           .attr("id", "states")
+           .selectAll("path")
+           .data(countries)
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("id", function (d) { return d.id; })
+           .attr("class", function (d) {
+              this.attr = dictionary[d.id];
+              return dictionary[d.id] ? ("q" + dictionary[d.id].level  + "-5") : "none";
+            })
+           .on("click", function () { alert(this.id + ': ' + this.attr.value); });
+
+        svg.append("g")
+           .selectAll("text")
+           .data(labels.filter(function(d) { return d.display; }))
+           .enter()
+           .append("text")
+           .text(function(d) {return d.cname;})
+           .attr("transform", function (d) {
+              var cn = countries.filter(function(c) {return c.id === d.id;}),
+                  p = path.centroid(cn[0]);
+              return "translate(" + p[0] + "," + p[1] + ")";
+           });
+
+        var names = ['<=0.2', '0.2-1.0', '1.0-1.8', '1.8-10', '>=10'],
+                   g = svg.append('g')
+
+        g.attr('transform', 'translate(150,280)')
+         .append('rect')
+         .attr('width', 100)
+         .attr('height', 140)
+         .attr('x', 0)
+         .attr('y', 0)
+         .attr('rx', 5)
+         .attr('ry', 5)
+         .attr('fill', '#fff')
+         .attr('stroke', '#666');
+
+
+        g.selectAll('text')
+         .data(names)
+         .enter()
+         .append('text')
+         .attr('x', 40)
+         .attr('y', function (d, i) { return i * 20 + 22; })
+         .style('text-anchor', 'start')
+         .text(function (d) { return d; });
+
+        g.append('text')
+         .attr('x', 5)
+         .attr('y', 125)
+         .style('text-anchor', 'start')
+         .text('单位: 万亿美元');
+
+        g.append('g')
+         .selectAll('rect')
+         .data(names)
+         .enter()
+         .append('rect')
+         .attr('width', 30)
+         .attr('height', 15)
+         .attr('x', 5)
+         .attr('y', function (d, i) { return i * 20 + 10; })
+         .attr("class", function (d, i) { return "q" + i + "-5"; })
+         .attr('stroke', '#000');
+      }
+  });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

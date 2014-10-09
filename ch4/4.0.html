@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>GeoJSON-SVG</title>
+	<link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+	<div id="map">
+		<img src="natural-earth-i.png" />
+		<p>
+			<span id="scale"></span> 2000 公里 &nbsp; 等距形投影 &nbsp;
+			图像来源: Natural Earth V2.0.0, 2012-10-12
+		</p>
+	</div>
+
+	<script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+	<script>
+		/* global d3 */
+        var width = 1080,                                      // 地图宽度
+			height = 540,                                      // 地图高度
+
+		projection = d3.geo.equirectangular()                  // 地图投影
+					   .scale((width - 1) / 2 / Math.PI)
+					   .translate([width / 2, height / 2]),
+
+		path = d3.geo.path().projection(projection);             // 绘图函数
+
+
+		d3.json('countries_110m.json', function (json) {         // 载入地图数据文件
+		    var features = json.features;                        // 获得地物对象
+
+            //...                                                // 处理地物对象
+
+		});
+
+
+		d3.json('topo_countries_110m.json', function (json) {    // 载入地图数据文件
+		    var features = topojson.feature(json,                // 获得地物对象
+                json.objects.countries_110m).features;           
+
+		    //...                                                // 处理地物对象
+
+		});
+
+	</script>
+</body>
+</html>
+
+

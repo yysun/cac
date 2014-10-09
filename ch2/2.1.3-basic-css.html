@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>世界地图</title>
+    <style type="text/css">
+        #map {
+            position: relative;
+            width: 1080px;
+            height: 540px;
+            margin-right:10px;
+        }
+        #map img {
+            position: absolute;
+        }
+        #map p {
+            position: absolute;
+            font: normal 12px arial;
+            color: rgb(89,159,192);
+            top: 510px;
+            left: 650px;
+        }
+        #map #scale {
+            display: inline-block;
+            height: 5px;
+            width: 54px;
+            border: 1px solid rgb(89,159,192);
+            border-top: 0px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map">
+        <img src="natural-earth-i.png" />
+        <p>
+            <span id="scale"></span> 2000 公里 &nbsp; 等距形投影 &nbsp;
+            图像来源: Natural Earth V2.0.0, 2012-10-12
+        </p>
+    </div>
+</body>
+</html>
+
+
+

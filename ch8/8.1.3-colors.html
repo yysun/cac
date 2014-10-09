@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>地图色彩</title>
+  <style>
+    .palette {
+      cursor: pointer;
+      vertical-align: bottom;
+      margin: 4px 0 4px 6px;
+      padding: 4px;
+      background: #fff;
+      /*border: solid 1px #aaa;*/
+    }
+    .palette .key {
+      width:100px;
+      display: inline-block;
+      font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .swatch {
+      display: inline-block;
+      vertical-align: middle;
+      width: 37px;
+      height: 22px;
+      border: solid 1px #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="legend"></div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="colorbrewer.v1.min.js"></script>
+  <script>
+    d3.select("body")
+  .selectAll(".palette")
+    .data(d3.entries(colorbrewer))
+  .enter().append("div")
+    .attr("class", "palette")
+    .html(function (d) { return "<span class='key'>" + d.key + "</span>"; })
+    .on("click", function (d) { console.log(d3.values(d.value).map(JSON.stringify).join("\n")); })
+  .selectAll(".swatch")
+    .data(function (d) { return d.value[d3.keys(d.value).map(Number).sort(d3.descending)[0]]; })
+  .enter().append("span")
+    .attr("class", "swatch")
+    .style("background-color", function (d) { return d; });
+
+  </script>
+</body>
+</html>

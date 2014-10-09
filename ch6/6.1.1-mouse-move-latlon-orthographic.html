@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>鼠标信息回显</title>
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="map"></div>
+  <div id="info"></div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/topojson/topojson.js" charset="utf-8"></script>
+  <script src="map.js" charset="utf-8"></script>
+  <script>
+    /* global d3, map */
+    var width = 1080,
+        height = 540,
+        projection = d3.geo.orthographic()                   // 定义正射投影
+          .scale(270)
+          .translate([width / 4, height / 2])
+          .rotate([-110, 0])
+          .clipAngle(90)
+          .precision(0.1);
+    map({projection: projection}, function(svg, projection){ // 用正射投影绘制地图
+      var info = d3.select('#info');
+      svg.on('mousemove', function () {
+        var x = d3.mouse(this)[0],                           // 获取计算机屏幕坐标
+            y = d3.mouse(this)[1],
+            lnglat = projection.invert([x, y]),              // 计算经纬度
+
+            lng = Math.abs(lnglat[0].toPrecision(5)),
+            lat = Math.abs(lnglat[1].toPrecision(5)),
+            text = (lnglat[0] < 0 ? lng + "° W" : lng + "° E") + ', ' +
+                   (lnglat[1] < 0 ? lat + "° S" : lat + "° N");
+        text = '(' + x + ', ' + y + ') - (' + text + ')';
+        info.text(text);                                     // 显示鼠标定位信息
+      });
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+

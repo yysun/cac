@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>分级底图</title>
+  <link href="styles.css" rel="stylesheet" />
+  <link href="colorbrewer.css" rel="stylesheet" />
+  <style type="text/css">
+    body {background:#eee; font:12px arial; margin-top:20px;}
+    #title, #footer  {text-align:center; color:#000; width:1080px;}
+    #title {font-size:24px;}
+    .background {fill:#fff;}
+    #legend path { fill:none;}
+    #legend line { stroke: #000; shape-rendering: crispEdges;}
+    #legend text { fill: #000; }
+    .qundefined-5{ fill: #eee; }
+  </style>
+</head>
+<body class="YlGn">
+  <div id="title">世界各国每百人互联网用户 (2012)</div>
+  <div id="map"></div>
+  <div id="legend"></div>
+  <div id="footer">数据来源：联合国统计局 http://data.un.org，地图投影：自然地球</div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/topojson/topojson.js" charset="utf-8"></script>
+  <script src="../bower_components/queue-async/queue.js" charset="utf-8"></script>
+  <script src="d3.geo.projection.v0.min.js"></script>
+    <script src="map.js" charset="utf-8"></script>
+  <script>
+    /* global d3, topojson, map, queue*/
+    map({}, function (svg, projection, path) {
+
+      queue()
+        .defer(d3.json, 'data/topo_countries_110m.json')
+        .defer(d3.json, 'data/country_internet_percentage.json')
+        .defer(d3.json, 'data/country_labels.json')
+        .await(make_map);
+
+      function make_map(error, topojson_countries, dictionary, labels) {
+
+        var countries = topojson.feature(topojson_countries,           // 读取政区图形数据
+              topojson_countries.objects.countries_110m).features;
+
+        svg.append("g")                                                // 绘制政区图形
+           .attr("id", "states")
+           .selectAll("path")
+           .data(countries)
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("id", function (d) { return d.id; })
+           .attr("class", function (d) { return "q" + dictionary[d.id] + "-5"; });
+
+        svg.append("g")                                                // 绘制注记文字
+           .selectAll("text")
+           .data(labels.filter(function(d) { return d.display; }))
+           .enter()
+           .append("text")
+           .text(function(d) {return d.cname;})
+           .attr("transform", function (d) {
+              var cn = countries.filter(function(c) {return c.id === d.id;}),
+                  p = path.centroid(cn[0]);
+              return "translate(" + p[0] + "," + p[1] + ")";
+           });
+
+        var xscale = d3.scale.linear()                                 // 定义图例大小
+              .domain([0, 100])
+              .range([0, 300]),
+
+            x = d3.svg.axis()                                          // 绘制图例文字
+              .scale(xscale)
+              .orient("bottom")
+              .ticks(5)
+              .tickSize(10);
+
+        d3.select("#legend")                                           // 绘制图例色块
+          .append("svg")
+          .attr("height", "30")
+          .append("g")
+          .attr("transform", "translate(390,0)")
+          .call(x)
+          .selectAll("rect")
+          .data(d3.range(5))
+          .enter()
+          .append("rect")
+          .attr("x", function(d) { return d * 60; })
+          .attr("width", 60)
+          .attr("height", 8)
+          .attr("class", function(d) { return "q" + d + "-5"; });
+      }
+  });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

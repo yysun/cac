@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>世界地图</title>
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="map">
+    <img src="natural-earth-i.png" />
+    <canvas id="canvas"></canvas>
+    <p>
+      <span id="scale"></span> 2000 公里 &nbsp; 等距形投影 &nbsp;
+      图像来源: Natural Earth V2.0.0, 2012-10-12
+    </p>
+  </div>
+  <script>
+    var canvas  = document.getElementById("canvas"),         // 获取画布
+        context = canvas.getContext("2d");                   // 获取画布的绘图区域
+    canvas.width = 1080;                                     // 设置画布宽度
+    canvas.height = 540;                                     // 设置画布高度
+    context.beginPath();                                     // 开始图框
+    context.rect(1, 1, 1078, 538);                           // 绘制矩形
+    context.lineWidth = 4;                                   // 设置线宽
+    context.strokeStyle = '#599fc0';                         // 设置边框颜色
+    context.stroke();                                        // 绘制边框
+  </script>
+</body>
+</html>
+
+
+
+

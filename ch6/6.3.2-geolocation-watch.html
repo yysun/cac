@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>跟踪地理位置</title>
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <button onclick="start_watch()">开始跟踪</button>
+  <button onclick="end_watch()">结束跟踪</button>
+  <div id="info"></div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script>
+    var w, info = d3.select('#info');
+    function start_watch() {                                   // 开始跟踪
+      info.html('开始跟踪<br/>');
+      if ("geolocation" in navigator) {
+        w = navigator.geolocation.watchPosition(function (p) {
+          var text = info.html();
+          text += '经度：' + p.coords.longitude + '<br/>';
+          text += '纬度：' + p.coords.latitude + '<br/>';
+          text += '高度：' + p.coords.altitude + '<br/>';
+          text += '速度：' + p.coords.speed + '<br/>';
+          info.html(text);
+        });
+      }
+    }
+    function end_watch() {                                     // 结束跟踪
+      info.text('结束跟踪');
+      if ("geolocation" in navigator) {
+        navigator.geolocation.clearWatch(w);
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

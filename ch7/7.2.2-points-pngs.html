@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>点状符号</title>
+  <link href="styles.css" rel="stylesheet" />
+  <style type="text/css">
+  body {background: #f7f7f7}
+  .background {stroke:none;}
+  .rivers path {fill:rgb(173,222,255); stroke:#dadada; }
+  .roads path {fill:none; stroke:#dadada; }
+  .rail_stations path {fill:rgb(201,28,51); stroke:#000;}
+  .rail_stations_text text {font-family: Arial; font-size:14px; text-anchor:middle; fill:#000;}
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="attribution">数据来源： <a href="http://openstreetmap.org">OpenStreetMap</a>
+    地图投影：自然地球 (投影中心121.47N 31.24E)</div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/queue-async/queue.js" charset="utf-8"></script>
+  <script src="d3.geo.projection.v0.min.js"></script>
+  <script src="map.js" charset="utf-8"></script>
+  <script>
+    /*global d3, queue, map*/
+    map({no_graticule:true}, function(svg, projection, path) {
+      queue()
+        .defer(d3.json, 'data/rivers.geojson')         // geojson points
+        .defer(d3.json, 'data/roads.geojson')         // geojson points
+        .defer(d3.json, 'data/rail_stations.geojson')         // geojson points
+        .await(make_map);
+
+      function make_map(error, geojson_rivers, geojson_roads, geojson_rail_stations) {
+
+        projection.rotate([-121.471, -31.244])
+          .scale(1400000);
+
+        var rivers = geojson_rivers.features,
+            roads = geojson_roads.features,
+            rail_stations = geojson_rail_stations.features;
+
+        svg.append("g")                                      // 绘制地物
+           .attr("class", "rivers")
+           .selectAll("path")
+           .data(rivers)
+           .enter()
+           .append("path")
+           .attr("d", path);
+
+        svg.append("g")                                      // 绘制地物
+           .attr("class", "roads")
+           .selectAll("path")
+           .data(roads)
+           .enter()
+           .append("path")
+           .attr("d", path);
+
+        path.pointRadius(3);
+
+        svg.append("g")                                      // 绘制地物
+           .attr("class", "rail_stations")
+           .selectAll("path")
+           .data(rail_stations)
+           .enter()
+           .append("path")
+           .attr("d", path);
+
+          svg.append("g")                                    // 绘制图标
+           .attr("class", "rail_stations_img")
+           .selectAll("path")
+           .data(rail_stations)
+           .enter()
+           .append("g")
+           .append("svg:image")
+           .attr('width', 24)
+           .attr('height', 24)
+           .attr("xlink:href","rail-light-24.png")
+           .attr("transform", function(d) {
+              var p = projection(d.geometry.coordinates);
+              p[0] = p[0]-12;
+              p[1] = p[1]-28;
+              return "translate(" + p[0] + "," + p[1] + ")";
+            });
+      }
+    });
+  </script>
+</body>
+</html>

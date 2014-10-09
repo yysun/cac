@@ -1,0 +1,29 @@
+﻿.background {
+    fill: none;
+    pointer-events: all;
+    stroke: #333;
+    }
+
+.graticule {
+    fill: none;
+    stroke: #333;
+    stroke-width: .5px;
+}
+
+.graticule :nth-child(2n) {
+    stroke-dasharray: 2,2;
+}
+
+#states path {
+  fill: darkgrey;
+  stroke: lightgrey;
+}
+
+#states path:hover {
+  fill: lightgrey;
+  stroke: lightgrey;
+}
+
+.hidden {
+    display: none;
+}

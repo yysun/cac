@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>世界政区地图</title>
+  <link href="styles.css" rel="stylesheet" />
+  <link href="colorbrewer.css" rel="stylesheet" />
+  <style type="text/css">
+    body {background:#eee; font:12px arial; margin-top:20px;}
+    #title, #footer  {text-align:center; color:#000; width:1080px;}
+    #title {font-size:24px;}
+    .background {fill:#fff;}
+    #states path { stroke: darkgray; }
+    text {font-family: SimHei; font-size:12px; text-anchor:middle; fill:#000;}
+  </style>
+</head>
+<body>
+  <div id="title">世界政区地图</div>
+  <div id="map"></div>
+  <div id="footer">数据来源：自然地球 http://naturalearthdata.com，地图投影：自然地球</div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/topojson/topojson.js" charset="utf-8"></script>
+  <script src="../bower_components/queue-async/queue.js" charset="utf-8"></script>
+  <script src="d3.geo.projection.v0.min.js"></script>
+  <script src="map.js" charset="utf-8"></script>
+  <script>
+    /* global d3, topojson, map, queue*/
+    map({}, function (svg, projection, path) {
+
+      queue()
+        .defer(d3.json, 'data/topo_countries_110m.json')
+        .defer(d3.json, 'data/country_colors.json')
+        .defer(d3.json, 'data/country_labels.json')
+        .await(make_map);
+
+      function make_map(error, topojson_countries, dictionary, labels){
+
+        var countries = topojson.feature(topojson_countries,          // 读取政区图形数据
+              topojson_countries.objects.countries_110m).features;
+
+        svg.append("g")                                               // 绘制政区图形 
+           .attr("id", "states")
+           .attr("class", "Set2")
+           .selectAll("path")
+           .data(countries)
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("id", function (d) { return d.id; })
+           .attr("class", function (d) { return "q" + dictionary[d.id] + "-7"; });
+
+        svg.append("g")                                               // 绘制注记文字
+           .selectAll("text")
+           .data(labels.filter(function(d) { return d.display; }))
+           .enter()
+           .append("text")
+           .text(function(d) {return d.cname;})
+           .attr("transform", function (d) {
+              var cn = countries.filter(function(c) {return c.id === d.id;}),
+                  p = path.centroid(cn[0]);
+              return "translate(" + p[0] + "," + p[1] + ")";
+           });
+      }
+  });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

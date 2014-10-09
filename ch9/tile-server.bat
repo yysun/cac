@@ -1,0 +1,1 @@
+call node mbtiles-server\server.js World.mbtiles 8081

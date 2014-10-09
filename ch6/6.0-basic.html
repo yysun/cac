@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>鼠标操作</title>
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="map"></div>
+  <div id="info"></div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/topojson/topojson.js" charset="utf-8"></script>
+  <script src="map.js" charset="utf-8"></script>
+  <script>
+    /* global d3, map */
+    map({}, function (svg) {
+
+
+      svg.on('mousemove', function () {
+        // 这里针对鼠标移动事件编程
+      });
+
+      svg.on('click', function () {
+        // 这里针对整幅地图的鼠标点击事件编程
+      });
+
+      svg.selectAll('path').on('click', function () {
+        // 这里针对每个地物的鼠标点击事件编程
+        var id = this.id；
+      });
+
+      d3.csv('ne_110m_admin_0_countries.csv', function (data) { // 载入属性数据
+          var properties = data;
+
+      });
+
+
+      var drag = d3.behavior.drag()                         // 定义鼠标拖动
+            .on('drag', function () {                       // 地图平移事件
+                // 这里针对鼠标拖动事件编程
+            });
+      svg.call(drag);                                       // 为地图加载鼠标拖动
+
+      var md = false；
+      svg.on("mousedown", function () {
+        md = true;
+        // 这里针对鼠标键按下事件编程
+      })
+      .on("mousemove", function () {
+        if (md) {
+        // 这里针对鼠标键移动事件编程
+        }
+      })
+      .on("mouseup", function () {
+        md = false;
+        // 这里针对鼠标键释放事件编程
+      });
+
+
+      var md = false, rect, x0, y0;
+      svg.on("mousedown", function() {
+        md = true;
+        rect = svg.append('rect')
+          .classed({'arc':true})
+          .attr('x', x0 = d3.event.clientX)
+          .attr('y', y0 = d3.event.clientY);
+      })
+      .on("mousemove", function() {
+        if(md) {
+          rect.attr('width',  d3.event.clientX - x0)
+              .attr('height', d3.event.clientY - y0);
+        }
+      })
+      .on("mouseup", function() {
+        md = false;
+        rect.remove();
+      });
+
+
+    });
+
+  </script>
+</body>
+</html>
+
+

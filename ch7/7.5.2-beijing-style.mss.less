@@ -1,0 +1,168 @@
+@text-font:"SimHei Regular","Arial Regular","DejaVu Sans Book";
+@background:#ffffff;
+@river:#addeff;
+@park:#e0fde0;
+@primary:#e66;
+@roadfill:#ffffdf;
+@rail:#9d9d9d;
+@raildash:#fff;
+@secondary:#dadada;
+@residential:#dadada;
+@building:#dddd22;
+@text:#2b2b2b;
+
+Map {
+  background-color: @background;
+}
+#natural {
+  [type='riverbank'] {
+    polygon-fill:@river;
+    line-color:@river;
+  }
+}
+
+#natural[type='park'] {
+  [zoom>=11] {
+    polygon-fill: @park;
+    line-color:@secondary;
+  }
+}  
+
+#roads {
+  [type='motorway'],
+  [type='primary'],
+  [type='trunk'] {
+    ::case {
+      line-width:4; 
+      line-color: @primary;
+    }
+    ::fill {
+      line-width:2; 
+      line-color:@roadfill; 
+    }
+  }
+  [zoom>=11] {
+    [type='motorway'],    
+    [type='primary'],
+    [type='trunk'] {
+      text-name: "[name]";
+      text-face-name: @text-font;    
+      text-placement: line;
+      text-dy:10;
+      text-fill:@text;
+    }     
+  }
+  [zoom>=13] {
+    [type='secondary'],
+    [type='tertiary'] {
+      line-color: @secondary;
+    }
+  }
+  [zoom>=14] {
+    [type='unclassified'],
+    [type='residential'] {
+      line-color: @secondary;
+    }
+  }
+  [zoom>=15] {
+    [type='secondary'],
+    [type='tertiary'] {
+      text-name: "[name]";
+      text-face-name: @text-font;   
+      text-placement: line;
+      text-fill:@text;      
+    }    
+  }
+  [zoom>=16] {   
+    [type='secondary'],
+    [type='tertiary'] {
+      line-width:4; 
+    }
+    [type='unclassified'],
+    [type='residential'] {   
+      line-color: @residential;
+      text-name: "[name]";
+      text-face-name: @text-font;   
+      text-placement: line;
+      text-fill:@text;
+    }
+  }
+}
+
+#railways {
+  [type='rail'],
+  [type='subway'] {
+    ::line {
+      line-width: 5;
+      line-color: @secondary;
+    }
+    ::dash {
+      line-color: @raildash;
+      line-width: 2.5;
+      line-dasharray: 6, 6;
+    }
+    [zoom>=13] {
+      ::line {
+        line-color: @rail;
+      }
+    }
+  }
+}
+
+#places {
+  [type='state'],
+  [type='city'] {
+    text-name: "[name]";
+    text-face-name: @text-font;    
+    text-placement-type: simple;
+    text-placements: "N,S,E,W,NE,SE,NW,SW,16,14,12";
+	text-size:40;
+    text-fill:@text;
+  }
+  [zoom>11] {
+    [type='suburb'] {
+      text-name: "[name]";
+      text-face-name: @text-font;    
+      text-placement-type: simple;
+      text-placements: "N,S,E,W,NE,SE,NW,SW,16,14,12";
+      text-size:20;
+      text-fill:@text;
+    }
+  } 
+}
+
+#buildings {
+  [zoom>=13] {
+    polygon-fill:@secondary;
+    line-color:@secondary;
+  }  
+  [zoom>=15] {   
+    line-color:@building;  
+  }
+}
+
+#building_labels {
+  [zoom>=16] {   
+    text-name: "[name]";
+    text-face-name: @text-font;   
+    text-placement-type: simple;
+    text-placements: "N,S,E,W,NE,SE,NW,SW,16,14,12";    
+    text-fill:@text;  
+   } 
+}
+
+#natural_labels[type='park'] {
+  [zoom>=12] {
+    text-name: "[name]";
+    text-face-name: @text-font;
+    text-placement-type: simple;
+	text-placements: "N,S,E,W,NE,SE,NW,SW,16,14,12";
+    text-fill:@text;
+  }
+} 
+
+
+
+
+
+

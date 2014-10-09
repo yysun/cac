@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>面状符号</title>
+  <link href="styles.css" rel="stylesheet" />
+  <style type="text/css">
+  body {background: #f7f7f7}
+  .background {stroke:none;}
+  .roads path  {fill:none; stroke:rgb(218,218,218); }
+  .rivers path {fill:rgb(173,222,255); stroke:rgb(218,218,218);}
+  .parks path  {fill:rgb(205,255,205); stroke:rgb(218,218,218);}
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="attribution">
+    数据来源： <a href="http://openstreetmap.org">OpenStreetMap</a>
+    地图投影：自然地球 (投影中心121.47N 31.24E)
+  </div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/queue-async/queue.js" charset="utf-8"></script>
+  <script src="d3.geo.projection.v0.min.js"></script>
+  <script src="map.js" charset="utf-8"></script>
+  <script>
+    /*global d3, queue, map*/
+    map({no_graticule:true}, function(svg, projection, path) {
+      queue()
+        .defer(d3.json, 'data/rivers.geojson')         
+        .defer(d3.json, 'data/roads.geojson')
+        .defer(d3.json, 'data/parks.geojson')
+        .await(make_map);
+
+      function make_map(error, geojson_rivers, geojson_roads, geojson_parks) {
+
+        var rivers = geojson_rivers.features,
+            roads  = geojson_roads.features,
+            parks  = geojson_parks.features;
+
+        projection.rotate([-121.471, -31.244])
+          .scale(1400000);
+
+        svg.append("g")                                      // 绘制河流
+           .attr("class", "rivers")
+           .selectAll("path")
+           .data(rivers)
+           .enter()
+           .append("path")
+           .attr("d", path);
+
+        svg.append("g")                                      // 绘制公园
+          .attr("class", "parks")
+          .selectAll("path")
+          .data(parks)
+          .enter()
+          .append("path")
+          .attr("d", path);
+
+        svg.append("g")                                      // 绘制道路
+           .attr("class", "roads")
+           .selectAll("path")
+           .data(roads)
+           .enter()
+           .append("path")
+           .attr("d", path);
+      }
+    });
+  </script>
+</body>
+</html>

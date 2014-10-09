@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>线状符号</title>
+  <link href="styles.css" rel="stylesheet" />
+  <style type="text/css">
+  body {background: #f7f7f7}
+  .background {stroke:none;}
+  .rivers path {fill:rgb(173,222,255); stroke:rgb(218,218,218); }
+  .roads path {fill:none; stroke:rgb(218,218,218); }
+  .roads .river {fill:none; stroke:rgb(65,154,176); }
+
+  .roads .primary1 {fill:none; stroke:rgb(238,102,102); stroke-width:4;}
+  .roads .primary2 {fill:none; stroke:rgb(255,255,223); stroke-width:2; }
+
+  .roads .secondary {fill:none;  stroke-width:3; }
+  .roads .residential {fill:none; stroke:#dadada; stroke-width:2;}
+  .roads .rail1 {fill:none; stroke:rgb(105,105,105); stroke-width:4;}
+  .roads .rail2 {fill:none; stroke:rgb(255,255,255); stroke-width:2;}
+  .roads .light_rail {fill:none; stroke:rgb(0,128,192); }
+  .roads .subway1 {fill:none; stroke:rgb(158,158,158); stroke-width:4;}
+  .roads .subway2 {fill:none; stroke:rgb(255,255,255); stroke-width:2; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="attribution">
+    数据来源： <a href="http://openstreetmap.org">OpenStreetMap</a>
+    地图投影：自然地球 (投影中心121.47N 31.24E)
+  </div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/queue-async/queue.js" charset="utf-8"></script>
+  <script src="d3.geo.projection.v0.min.js"></script>
+  <script src="map.js" charset="utf-8"></script>
+  <script>
+    /*global d3, queue, map*/
+    map({no_graticule:true}, function(svg, projection, path) {
+      queue()
+        .defer(d3.json, 'data/rivers.geojson')        
+        .defer(d3.json, 'data/roads.geojson')         
+        .await(make_map);
+
+      function make_map(error, geojson_rivers, geojson_roads) {
+
+        projection.rotate([-121.471, -31.244])
+          .scale(1400000);
+
+        var rivers = geojson_rivers.features,
+            roads = geojson_roads.features;
+
+        function lines(kind, types) {                        // 按属性提取地物
+          return roads.filter(function(d){
+            return types.indexOf(d.properties[kind]) >= 0;
+          });
+        }
+
+        svg.append("g")                                      // 绘制河流
+           .attr("class", "rivers")
+           .selectAll("path")
+           .data(rivers)
+           .enter()
+           .append("path")
+           .attr("d", path);
+
+        svg.append("g")                                      // 绘制所有道路
+           .attr("class", "roads")
+           .selectAll("path")
+           .data(roads)
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("class", function(d) {
+              return d.properties.highway});
+
+        svg.append("g")                                      // 绘制河流中心线
+           .attr("class", "roads")
+           .selectAll("path")
+           .data(lines("waterway", ["river"]))
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("class", "river")
+           .attr("stroke-dasharray","10,10");
+
+        svg.append("g")                                      // 绘制铁路外层
+           .attr("class", "roads")
+           .selectAll("path")
+           .data(lines("railway", ["rail"]))
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("class", function(d) {
+              return d.properties.railway + "1";});
+
+        svg.append("g")                                      // 绘制铁路内层
+           .attr("class", "roads")
+           .selectAll("path")
+           .data(lines("railway", ["rail"]))
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("class", function(d) {
+              return d.properties.railway + "2";})
+           .attr("stroke-dasharray","6,6");
+
+        svg.append("g")                                      // 绘制地铁外层
+           .attr("class", "roads")
+           .selectAll("path")
+           .data(lines("railway", ["subway"]))
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("class", "subway1");
+
+        svg.append("g")                                      // 绘制地铁内层
+           .attr("class", "roads")
+           .selectAll("path")
+           .data(lines("railway", ["subway"]))
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("class", "subway2")
+           .attr("stroke-dasharray","4,4");
+
+        svg.append("g")                                      // 绘制外滩观光隧道
+           .attr("class", "roads")
+           .selectAll("path")
+           .data(lines("railway", ["light_rail"]))
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("class", "light_rail")
+           .attr("stroke-dasharray","2,2");
+
+
+        svg.append("g")                                      // 绘制主要道路外层
+           .attr("class", "roads")
+           .selectAll("path")
+           .data(lines("highway", ["primary"]))
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("class", "primary1");
+
+        svg.append("g")                                      // 绘制主要道路内层
+           .attr("class", "roads")
+           .selectAll("path")
+           .data(lines("highway", ["primary"]))
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("class", "primary2");
+
+      }
+    });
+  </script>
+</body>
+</html>

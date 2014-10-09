@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>鼠标信息回显</title>
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="map"></div>
+  <div id="tooltip" class="hidden"><p></p></div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/topojson/topojson.js" charset="utf-8"></script>
+  <script src="map.js" charset="utf-8"></script>
+  <script>
+    /* global d3, map, projection */
+    var width = 1080,
+        height = 540;
+    window.projection = d3.geo.orthographic()                 // 定义正射投影
+          .scale(270)
+          .translate([width / 4, height / 2])
+          .rotate([-110, 0])
+          .clipAngle(90)
+          .precision(0.1);
+    
+    map({projection: projection}, function (svg) {             // 用正射投影绘制地图
+      d3.csv('ne_110m_admin_0_countries.csv', function (data) {// 载入属性数据
+        var properties = data, timer,
+            tooltip = d3.select('#tooltip');
+
+        svg.selectAll('path')
+           .on('touchstart', function () {                     // 触摸屏点击开始
+             var id = this.id,                                 // 获取鼠标指针所在图形的id
+                 x = (d3.event.pageX + 10),
+                 y = (d3.event.pageY - 10)
+             timer = window.setTimeout(function () {        // 设置1秒的定时器
+               showInfo(id, x, y);
+             }, 1000);
+           })
+           .on('touchend', function () {                       // 触摸屏点击结束
+             window.clearTimeout(timer);                       // 删除定时器 
+           });
+
+
+        function showInfo(id, x, y) {                          // 显示属性数据的函数
+          var selected = properties.filter(                    // 根据 id 查找属性数据
+                function (d) { return d.name === id; });
+          if (selected.length) {
+            tooltip.style("left", x + "px")                    // 显示属性数据
+                   .style("top", y + "px")
+                   .classed("hidden", false)
+                   .select("p")
+                   .html("名称: <b>" + selected[0].name + "</b><br/>" +
+                         "代码: " + selected[0].iso_a3 + "<br/>" +
+                         "区域: " + selected[0].continent + "<br/>"
+                        );
+          } else {
+            tooltip.classed("hidden", true);                    // 隐藏属性数据
+          }
+        }
+      });
+    });  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
