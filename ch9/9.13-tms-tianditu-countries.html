@@ -8,7 +8,8 @@
 <body>
   <div id="map"></div>
   <div id="attribution">
-    数据来源:<a href="http://tianditu.cn">天地图</a>, <a href="http://naturalearthdata.com">自然地球</a>
+    数据来源:<a href="http://tianditu.cn">天地图</a>, 
+    <a href="http://naturalearthdata.com">自然地球</a>
     地图投影:球面墨卡托
   </div>
   <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
@@ -22,7 +23,10 @@
         "http://t0.tianditu.cn/DataServer?T=vec_w&X={x}&Y={y}&L={z}",
         "http://t0.tianditu.cn/DataServer?T=cva_w&X={x}&Y={y}&L={z}"
       ]
-    }, svg;
+    },
+    svg,
+    graticule = d3.geo.graticule();
+
     d3.json('topo_countries_110m.json', function (json) {
 
         var features = topojson.feature(json,
@@ -33,14 +37,22 @@
             svg = d3.select("#map")                            // 创建地图片图层
               .append("svg")
               .style("position", 'absolute')
+              .attr("width", 1080)
+              .attr("height", 540)
               .attr("id", "states");
-            svg.selectAll("path")
+            svg.selectAll("path")                              // 绘制政区
               .data(features)
               .enter()
               .append("path")
               .attr("d", path);
+            svg.append("g")                                    // 绘制经纬网
+              .attr("class", "graticule")
+              .selectAll("path")
+              .data(graticule.lines)
+              .enter().append("path")
+              .attr("d", path);
           }
-          svg.selectAll('path').attr('d', path);               // 更新经纬网
+          svg.selectAll('path').attr('d', path);               // 更新图形
         });
 
     });

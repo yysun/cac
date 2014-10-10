@@ -35,6 +35,7 @@
     .tile text {font-family: SimHei; font-size:14px; text-anchor:middle; fill:#000;}
   </style>
 </head>
+
 <body>
   <div id="map"></div>
   <div id="attribution">
@@ -53,14 +54,16 @@
         path = d3.geo.path().projection(projection),         // 定义绘图函数
         zoom = d3.behavior.zoom()                            // 定义鼠标交互
           .scale(projection.scale() * 2 * Math.PI)
-          .translate(projection([121.38, 31.24])
+          .translate(projection([-74.012, 40.783])
             .map(function (x) { return -x; }))
             .on('zoomend', refresh)
             .on('zoomstart', function() {
               p0 = zoom.translate();
             }),
         p0 = zoom.translate(),
-        svg = d3.select("#map").append("svg"),               // 创建地图片图层
+        svg = d3.select("#map").append("svg")                // 创建地图片图层
+                .attr("width", 1080)                         // 设置地图宽度
+                .attr("height", 540),               　　　　　// 设置地图高度
         tiles_layer = svg.append("g")
           .attr("class", "tiles");
 
@@ -69,6 +72,7 @@
         .attr("transform", null)
         .selectAll('.tile path').attr('d', path);
     }
+
 
     map0({projection: projection, zoom:zoom}, function (_, __, tiles) {
       var max = Math.pow(2, tiles[0][2]),                    // 地图片矩阵行列个数
@@ -79,7 +83,7 @@
              (zoom.translate()[0]-p0[0]) + "," +
              (zoom.translate()[1]-p0[1]) + ")";
 
-      tiles_layer.attr("transform", tr);
+      //tiles_layer.attr("transform", tr);
 
       var map_tiles = tiles_layer.selectAll('.tile')         // selectAll
         .data(valid_tiles, function (d) { return d; });
@@ -100,7 +104,6 @@
           return "tile";
         });
     });
-
 
     function drawTile(g, json) {
       if(!g || !json) return;
@@ -146,7 +149,6 @@
          .attr("d", path)
          .attr("class", "primary2");
     }
-
   </script>
 </body>
 </html>
