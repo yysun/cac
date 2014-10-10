@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>亚尔勃斯等积圆锥投影</title>
+  <title>等矩形投影</title>
   <link href="styles.css" rel="stylesheet" />
 </head>
 <body>
@@ -15,11 +15,9 @@
     /* global d3, map */
     var map_width  = 1080,
         map_height = 540,
-        projection = d3.geo.albers()
-          .scale(810)
-          .rotate([-105, 0])
-          //.parallels([29.5, 45.5])
-          .translate([map_width / 2, map_height / 2 - 30])
+        projection = d3.geo.equirectangular()
+          .scale((map_width-1) / 2 / Math.PI)
+          .translate([map_width / 2, map_height / 2])
           .precision(0.1);
 
     map({ width: map_width, height: map_height,

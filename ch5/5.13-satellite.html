@@ -22,39 +22,33 @@
           .center([-5, 6])
           .tilt(20)
           .clipAngle(Math.acos(1 / 1.1) * 180 / Math.PI - 1e-6),
-
       path = d3.geo.path().projection(projection),
       graticule = d3.geo.graticule(),               // 定义经纬网
       svg = d3.select('#map')                       // 绘制地图 svg 标签
           .append("svg")
-          .style("z-index", 5)
           .style("position", 'absolute')
           .attr("width", width)
           .attr("height", height);
-
       graticule.step([3, 1.5]);
 
-  window.projection = projection;
-  window.path = path;
-  d3.json('ne_10m_admin_0_countries_lakes.topojson', function (json) {  // 载入地图数
-      var features = topojson.feature(json,
-          json.objects.ne_10m_admin_0_countries_lakes).features;         // 转化 topojson 至 geojson
-      svg.append("g")                                    // 绘制地物
-         .attr("id", "states")
-         .selectAll("path")
-         .data(features)
-         .enter()
-         .append("path")
-         .attr("d", path)
-         .attr("id", function(d){ return d.id; });
-
-       svg.append("g")                               // 绘制经纬网
-         .attr("class", "graticule")
-         .selectAll("path")
-         .data(graticule.lines)
-         .enter().append("path")
-         .attr("d", path);
-  });
+      d3.json('ne_10m_admin_0_countries_lakes.topojson', function (json) {  
+        var features = topojson.feature(json,
+            json.objects.ne_10m_admin_0_countries_lakes).features;         
+        svg.append("g")                             // 绘制地物
+           .attr("id", "states")
+           .selectAll("path")
+           .data(features)
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("id", function (d) { return d.id; });
+        svg.append("g")                             // 绘制经纬网
+            .attr("class", "graticule")
+            .selectAll("path")
+            .data(graticule.lines)
+            .enter().append("path")
+            .attr("d", path);
+      });
 </script>
 </body>
 </html>

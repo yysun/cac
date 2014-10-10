@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>兰勃特等角圆锥投影</title>
+  <title>墨卡托投影</title>
   <link href="styles.css" rel="stylesheet" />
 </head>
 <body>
@@ -15,13 +15,13 @@
     /* global d3, map */
     var map_width  = 1080,
         map_height = 540,
-        projection = d3.geo.conicConformal()
-          .scale(135)
+        projection = d3.geo.mercator()
+          .scale(120)
           .translate([map_width / 2, map_height / 2])
           .precision(0.1);
-
-    map({ width: map_width, height: map_height,
-          projection: projection });
+    map({ projection: projection });
 </script>
 </body>
 </html>
+
+

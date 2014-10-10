@@ -6,7 +6,7 @@
 
 .graticule {
     fill: none;
-    stroke: #333;
+    stroke: #aaa;
     stroke-width: .5px;
 }
 
@@ -15,7 +15,7 @@
 }
 
 #states path {
-  fill: darkgrey;
+  fill: #666;
   stroke: lightgrey;
 }
 

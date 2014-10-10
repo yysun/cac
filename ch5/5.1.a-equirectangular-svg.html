@@ -13,7 +13,6 @@
     /* global d3, topojson */
     var width = 1080,
         height = 540,
-
     projection = d3.geo.equirectangular()                    // 地图投影
                    .scale((width-1) / 2 / Math.PI)
                    .translate([width / 2, height / 2]),
@@ -30,7 +29,7 @@
           .enter()
           .append("path")
           .attr("d", path)
-          .attr("class", "feature");
+          .attr("class", "states");
     });
   </script>
 </body>
