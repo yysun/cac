@@ -22,8 +22,8 @@
     var image = new Image();
     image.onload = function () {                             // 定义图像载入成功后的操作
       context.drawImage(image, 0, 0);                        // 在画布上绘制图像
-      var pixelData = context                                // 获取像素数组
-            .getImageData(0, 0, width, height).data;
+      var imageData = context.getImageData(0, 0, width, height);
+          pixelData = imageData.data;
 
       for (var y = 0; y < height; y++) {                     // 循环遍历每个像素
         for (var x = 0; x < width; x++) {
@@ -34,9 +34,9 @@
           var b = pixelData[idx + 2];                        // 获取显示的蓝色值
 
           var g = (r * 0.3) + (g * 0.59) + (b * 0.11);       // 计算灰阶值
-          pixelData[idx++] =                                 // 重新设置灰阶值
-          pixelData[idx++] = 
-          pixelData[idx++] = g;
+          pixelData[idx] =                                 // 重新设置灰阶值
+          pixelData[idx+1] = 
+          pixelData[idx+2] = g;
         }
       }
       context.putImageData(imageData, 0, 0);                 // 设置修改后的像素数组
