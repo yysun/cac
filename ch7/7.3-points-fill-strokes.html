@@ -14,30 +14,39 @@
 </head>
 <body>
   <div id="map"></div>
-  <div id="attribution">数据来源： <a href="http://openstreetmap.org">OpenStreetMap</a> 地图投影：自然地球 (投影中心121.47N 31.24E)</div>
+  <div id="attribution">数据来源： <a href="http://openstreetmap.org">OpenStreetMap</a>,
+    地图投影：墨卡托投影 (投影中心 121.4742 E 31.2383 N)</div>
   <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
   <script src="../bower_components/queue-async/queue.js" charset="utf-8"></script>
-  <script src="d3.geo.projection.v0.min.js"></script>
   <script src="map.js" charset="utf-8"></script>
   <script>
     /*global d3, queue, map*/
-    map({no_graticule:true}, function(svg, projection, path) {
+    map({}, function (svg, projection, path) {
+
       queue()
-        .defer(d3.json, 'data/rivers.geojson')         // geojson points
-        .defer(d3.json, 'data/roads.geojson')         // geojson points
-        .defer(d3.json, 'data/rail_stations.geojson')         // geojson points
+        .defer(d3.json, 'data/natural.geojson')              // 载入面状地物数据
+        .defer(d3.json, 'data/roads.geojson')                // 载入线状地物数据
+        .defer(d3.json, 'data/points.geojson')               // 载入点状地物数据
         .await(make_map);
 
-      function make_map(error, geojson_rivers, geojson_roads, geojson_rail_stations) {
+      function make_map(error, geojson_natural, geojson_roads, geojson_points) {
+      
+        function features(features, types) {                 // 按类型提取地物
+          return features.filter(function (d) {
+            return types.indexOf(d.properties['type']) >= 0;
+          });
+        }
 
-        var rivers = geojson_rivers.features,
-            roads = geojson_roads.features,
-            rail_stations = geojson_rail_stations.features;
 
-        projection.rotate([-121.471, -31.244])
-          .scale(1400000);
+        var rivers = features(geojson_natural.features, 'riverbank'),    // 水域
+            roads = geojson_roads.features,                              // 道路
+            rail_stations = features(geojson_points.features,'station'); // 地铁站 
 
-        svg.append("g")                                      // 绘制地物
+
+        projection.rotate([-121.4742, -31.2383])             // 设置投影中心
+          .scale(1400000);                                   // 设置投影比例
+
+        svg.append("g")                                      // 绘制河流
            .attr("class", "rivers")
            .selectAll("path")
            .data(rivers)
@@ -45,7 +54,7 @@
            .append("path")
            .attr("d", path);
 
-        svg.append("g")                                      // 绘制地物
+        svg.append("g")                                      // 绘制道路
            .attr("class", "roads")
            .selectAll("path")
            .data(roads)

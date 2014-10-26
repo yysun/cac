@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>点状符号</title>
+  <link href="styles.css" rel="stylesheet" />
+  <style type="text/css">
+  body {background: #f7f7f7}
+  .background {stroke:none;}
+  .rivers path {fill:rgb(173,222,255); stroke:#dadada; }
+  .roads path {fill:none; stroke:#dadada; }
+  .rail_stations path {fill:rgb(201,28,51); stroke:#000;}
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="attribution">数据来源： <a href="http://openstreetmap.org">OpenStreetMap</a>,
+    地图投影：墨卡托投影 (投影中心 121.4742 E 31.2383 N)</div>
+  <script src="../bower_components/d3/d3.js" charset="utf-8"></script>
+  <script src="../bower_components/queue-async/queue.js" charset="utf-8"></script>
+  <script src="map.js" charset="utf-8"></script>
+  <script>
+    /*global d3, queue, map*/
+    map({}, function (svg, projection, path) {
+
+      queue()
+        .defer(d3.json, 'data/natural.geojson')              // 载入面状地物数据
+        .defer(d3.json, 'data/roads.geojson')                // 载入线状地物数据
+        .defer(d3.json, 'data/points.geojson')               // 载入点状地物数据
+        .await(make_map);
+
+      function make_map(error, geojson_natural, geojson_roads, geojson_points) {
+      
+        function features(features, types) {                 // 按类型提取地物
+          return features.filter(function (d) {
+            return types.indexOf(d.properties['type']) >= 0;
+          });
+        }
+
+        
+        var rivers = features(geojson_natural.features, 'riverbank'),    // 水域
+            roads = geojson_roads.features,                              // 道路
+            rail_stations = features(geojson_points.features,'station'); // 地铁站 
+
+
+        projection.rotate([-121.4742, -31.2383])             // 设置投影中心
+          .scale(1400000);                                   // 设置投影比例
+
+        svg.append("g")                                      // 绘制河流
+           .attr("class", "rivers")
+           .selectAll("path")
+           .data(rivers)
+           .enter()
+           .append("path")
+           .attr("d", path);
+
+        svg.append("g")                                      // 绘制道路
+           .attr("class", "roads")
+           .selectAll("path")
+           .data(roads)
+           .enter()
+           .append("path")
+           .attr("d", path);
+
+        path.pointRadius(3);                                 // 设置圆形半径
+
+        svg.append("g")                                      // 绘制地铁站
+           .attr("class", "rail_stations")
+           .selectAll("path")
+           .data(rail_stations)
+           .enter()
+           .append("path")
+           .attr("d", path);
+
+        svg.append("g")                                      // 绘制图标
+         .attr("class", "rail_stations_img")
+         .selectAll("path")
+         .data(rail_stations)
+         .enter()
+         .append("g")
+         .append("svg:image")
+         .attr('width', 24)
+         .attr('height', 24)
+         .attr("xlink:href", "rail-light-24.png")
+         .attr("transform", function (d) {
+           var p = projection(d.geometry.coordinates);
+           p[0] = p[0] - 12;
+           p[1] = p[1] - 28;
+           return "translate(" + p[0] + "," + p[1] + ")";
+         });
+
+      }
+    });
+  </script>
+</body>
+</html>
