@@ -1,0 +1,14 @@
+{
+  "name": "d3-geo-projection",
+  "homepage": "https://github.com/geometeor/d3-geo-projection",
+  "version": "0.2.7",
+  "_release": "0.2.7",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.2.7",
+    "commit": "c5d486dcac4f7cd40373cb60993ab66166c96f49"
+  },
+  "_source": "git://github.com/geometeor/d3-geo-projection.git",
+  "_target": "~0.2.7",
+  "_originalSource": "d3-geo-projection"
+}
