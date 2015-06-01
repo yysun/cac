@@ -1,0 +1,12 @@
+# step 1, export PDF to JSON
+
+node ./getinfo.js JSJ01.pdf > book1.js
+node ./getinfo.js JSJ07.pdf > book2.js
+
+# step 2, edit book.js to combine JSON from multiple PDFs
+
+# step 3, edit keywords.js to add/remove keywords
+
+# step 4, generate index
+
+node ./create-index.js > index.txt
