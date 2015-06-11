@@ -37,8 +37,10 @@
       </div>
       <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
         <ul class="nav navbar-nav">
-<!--          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">演示 <b class="caret"></b></a>
+          <li><a href="cac.zip" class="navbar-brand">程序下载</a></li>
+          <li><a href="https://github.com/yysun/cac" class="navbar-brand">GitHub 项目</a></li>
+          <li class="dropdown">
+            <a href="#" class="navbar-brand dropdown-toggle" data-toggle="dropdown">演示 <b class="caret"></b></a>
             <ul class="dropdown-menu">
               <li><a href='#'>第一章 概述</a></li>
               <li><a href='ch2'>第二章 平台和工具</a></li>
@@ -52,9 +54,7 @@
               <li><a href='ch8'>第八章 专题地图</a></li>
               <li><a href='ch9'>第九章 网络地图</a></li>
             </ul>
-          </li>-->
-          <a href="cac.zip" class="navbar-brand">程序下载</a>
-          <a href="https://github.com/yysun/cac" class="navbar-brand">GitHub 项目</a>            
+          </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
         </ul>
@@ -107,5 +107,10 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
   <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+  <script>
+    if (document.location.hostname !== "localhost") {
+      $('li.dropdown').hide();
+    }
+  </script>
 </body>
 </html>
