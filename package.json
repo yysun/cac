@@ -1,0 +1,29 @@
+{
+  "name": "cac",
+  "version": "1.0.0",
+  "description": "source code of the book titled Computer Cartography",
+  "main": "index.js",
+  "scripts": {
+    "start": "opener http://localhost:8080 && http-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yysun/cac.git"
+  },
+  "keywords": [
+    "cartography",
+    "mapping",
+    "javascript",
+    "d3"
+  ],
+  "author": "Yiyi Sun",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/yysun/cac/issues"
+  },
+  "homepage": "https://github.com/yysun/cac",
+  "devDependencies": {
+    "http-server": "^0.8.0",
+    "opener": "^1.4.1"
+  }
+}
